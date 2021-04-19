@@ -55,6 +55,15 @@ function refreshTimestamps(
   });
 }
 
+function parseSnowFlake(snowFlake: number) {
+  // Old snowFlakes (under 10 digits) don't contain any data of date.
+  if (snowFlake < 10000000000) return undefined;
+
+  // (val >> 22) + Standard Time
+  const unixTime = Math.floor(snowFlake / 4194304) + 1288834974657;
+  return new Date(unixTime);
+}
+
 export const maybeSetupCustomTimestampFormat = makeBTDModule(({TD, settings, jq}) => {
   const {timestampStyle} = settings;
   if (timestampStyle === BTDTimestampFormats.RELATIVE) {
@@ -85,10 +94,24 @@ export const maybeSetupCustomTimestampFormat = makeBTDModule(({TD, settings, jq}
     refreshTimestamps(settings);
     setInterval(() => refreshTimestamps(settings), TIMESTAMP_INTERVAL);
     onChirpAdded((addedChirp) => {
-      refreshTimestamps(
-        settings,
-        document.querySelectorAll(`${makeBtdUuidSelector('data-btd-uuid', addedChirp.uuid)} time`)
+      const timeElements: NodeListOf<HTMLTimeElement> = document.querySelectorAll(
+        `${makeBtdUuidSelector('data-btd-uuid', addedChirp.uuid)} time`
       );
+      timeElements.forEach((timeElement) => {
+        if (!timeElement.closest('.js-tweet.tweet')) {
+          return;
+        }
+
+        const tweet = addedChirp.chirp.getMainTweet?.() ?? addedChirp.chirp.targetTweet;
+        const date = parseSnowFlake(+tweet!.id);
+
+        if (date === undefined) {
+          return;
+        }
+
+        timeElement.dateTime = date.toISOString();
+      });
+      refreshTimestamps(settings, timeElements);
     });
   });
 });
