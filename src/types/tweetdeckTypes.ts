@@ -583,7 +583,7 @@ export enum ChirpBaseTypeEnum {
   TWEET = 'tweet',
 }
 
-export interface TweetDeckChirp {
+export interface TweetDeckChirp extends Function {
   _hasAnimatedGif: boolean;
   _media: any[];
   account: ChirpAccount;
@@ -613,15 +613,13 @@ export interface TweetDeckChirp {
   quotedTweetMissing: boolean;
   replyCount: number;
   retweet?: TweetDeckChirp;
-  retweetCount: number;
-  retweetedStatus?: TweetDeckChirp;
   selfThreadId: boolean;
   sender?: User;
   sortIndex: TargetTweetSortIndex;
   sourceNoHTML: string;
   sourceUrl: string;
   sourceUser: User;
-  targetTweet?: TweetDeckChirp;
+  targetTweet?: TwitterStatus;
   text: string;
   user: User;
   withPrettyEngagements: boolean;
@@ -629,13 +627,9 @@ export interface TweetDeckChirp {
   renderInMediaGallery(): string;
   renderQuotedTweet(options: {mediaPreviewSize: TweetDeckColumnMediaPreviewSizesEnum}): string;
   getChirpURL(): string;
-  getMainTweet(): TweetDeckChirp;
-  getReplyUsers(): User[];
-  getReplyingToUsers(): User[];
   destroy(): void;
   isRetweetedStatus(): boolean;
   getFilterableText(): string;
-  favorite(options: {element: JQuery<Element>; statusKey: string; column: string}): void;
   card: object;
 }
 
@@ -1093,10 +1087,15 @@ interface Net {
   ajax: unknown;
 }
 
-interface TwitterStatus extends TweetDeckChirp {
+export interface TwitterStatus extends TweetDeckChirp {
+  retweetCount: number;
+  retweetedStatus: TwitterStatus;
   prototype: TweetDeckChirp & {
     [k: string]: any;
+    getMainTweet(): TwitterStatus;
+    getReplyUsers(): User[];
     getReplyingToUsers(): User[];
+    favorite(options: {element: JQuery<Element>; statusKey: string; column: string}): void;
   };
 }
 
