@@ -263,6 +263,9 @@
   "settings_show_account_picker_like": {
     "message": "Show account picker when clicking on the like button"
   },
+  "settings_show_account_picker_follow": {
+    "message": "Show account picker when clicking on the follow button"
+  },
   "settings_accent_color": {
     "message": "Accent color"
   },
@@ -391,5 +394,59 @@
   },
   "settings_default_browsers_language": {
     "message": "Default (browser's language)"
+  },
+  "settings_logo_variation": {
+    "message": "Logo variation"
+  },
+  "settings_default": {
+    "message": "Default"
+  },
+  "settings_action_follow_author": {
+    "message": "Add action to follow author"
+  },
+  "settings_follow_actions": {
+    "message": "Follow action"
+  },
+  "settings_show_followers_count": {
+    "message": "Show the number of followers next to the follow icon"
+  },
+  "settings_show_verified_badges": {
+    "message": "Show verified badges"
+  },
+  "settings_show_translator_badges": {
+    "message": "Show translator badges"
+  },
+  "settings_show_badges_on_mutuals": {
+    "message": "Show badges on mutuals (you follow them and they follow you)"
+  },
+  "settings_badges": {
+    "message": "Badges"
+  },
+  "settings_show_a_clear_all_columns_button_in_the_sidebar": {
+    "message": "Show \"Clear all columns\" button in the sidebar"
+  },
+  "settings_require_alt_images": {
+    "message": "Disable the tweet button until all images have a description"
+  },
+  "settings_content_warning_hint": {
+    "message": "We'll check tweets for containing commonly used cw/tw/cn warnings to display these!"
+  },
+  "settings_show_content_warnings": {
+    "message": "Show content warnings for appropriately marked tweets"
+  },
+  "settings_images": {
+    "message": "Images"
+  },
+  "settings_collapse_unread_dms": {
+    "message": "Also collapse unread DMs"
+  },
+  "settings_mutual_badge_use_a_heart": {
+    "message": "Use a heart"
+  },
+  "settings_mutual_badge_use_double_arrows": {
+    "message": "Use double arrows"
+  },
+  "settings_show_account_avatars_on_top_of_columns": {
+    "message": "Show account avatars on top of columns"
   }
 }

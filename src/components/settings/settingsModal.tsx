@@ -10,6 +10,7 @@ import {getExtensionUrl, getExtensionVersion} from '../../helpers/webExtensionHe
 import {OnSettingsUpdate} from '../../services/setupSettings';
 import {BTDSettings} from '../../types/btdSettingsTypes';
 import {getTransString, Trans} from '../trans';
+import {NewFeatureBadge} from './components/newFeatureBadge';
 import {SettingsButton} from './components/settingsButton';
 import {
   SettingsContent,
@@ -31,6 +32,8 @@ interface SettingsModalProps {
 const topbarIcon = getExtensionUrl('build/assets/icons/icon-32.png');
 const topbarVersion = getExtensionVersion();
 
+const defaultMenuSection = SettingsMenuSectionsEnum.GENERAL;
+
 export const SettingsModal = (props: SettingsModalProps) => {
   const {onSettingsUpdate} = props;
   const [settings, setSettings] = useState<BTDSettings>(props.btdSettings);
@@ -42,9 +45,9 @@ export const SettingsModal = (props: SettingsModalProps) => {
         (v) => selectedIdFromUrl
       );
 
-      return validSelectedId || SettingsMenuSectionsEnum.GENERAL;
+      return validSelectedId || defaultMenuSection;
     } catch (e) {
-      return SettingsMenuSectionsEnum.GENERAL;
+      return defaultMenuSection;
     }
   });
   const [editorHasErrors, setEditorHasErrors] = useState(false);
@@ -53,7 +56,7 @@ export const SettingsModal = (props: SettingsModalProps) => {
 
   const onSearchQueryChange = (newQuery: string) => {
     if (!newQuery) {
-      setSelectedId(SettingsMenuSectionsEnum.GENERAL);
+      setSelectedId(defaultMenuSection);
     } else {
       setSelectedId(SettingsMenuSectionsEnum.BLANK);
     }
@@ -83,11 +86,10 @@ export const SettingsModal = (props: SettingsModalProps) => {
     }
   }, [onSettingsUpdate, settings]);
 
-  const canSave = useMemo(() => !editorHasErrors && isDirty && !saveError, [
-    editorHasErrors,
-    isDirty,
-    saveError,
-  ]);
+  const canSave = useMemo(
+    () => !editorHasErrors && isDirty && !saveError,
+    [editorHasErrors, isDirty, saveError]
+  );
 
   const menu = useMemo(() => {
     return makeSettingsMenu(
@@ -101,11 +103,10 @@ export const SettingsModal = (props: SettingsModalProps) => {
     );
   }, [settings]);
 
-  const showSettingsLabel = useMemo(() => !isEqual(props.btdSettings, settings) || isDirty, [
-    isDirty,
-    props.btdSettings,
-    settings,
-  ]);
+  const showSettingsLabel = useMemo(
+    () => !isEqual(props.btdSettings, settings) || isDirty,
+    [isDirty, props.btdSettings, settings]
+  );
 
   const renderSearchIndex = () => {
     return renderMenuInInvisibleContainer(menu);
@@ -156,7 +157,10 @@ export const SettingsModal = (props: SettingsModalProps) => {
                             setSelectedId(item.id);
                             setSearchQuery('');
                           }}>
-                          <div className="text">{item.label}</div>
+                          <div className="text">
+                            {item.label}{' '}
+                            {item.badgeProps && <NewFeatureBadge {...item.badgeProps} />}
+                          </div>
                         </li>
                       </Fragment>
                     );

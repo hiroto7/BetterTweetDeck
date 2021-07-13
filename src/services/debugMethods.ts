@@ -1,14 +1,19 @@
-import {config} from 'node-config-ts';
-
+import {BtdConfig} from '../defineConfig';
 import {findMustache, getChirpFromElement, getChirpFromKey} from '../helpers/tweetdeckHelpers';
 import {makeBTDModule} from '../types/btdCommonTypes';
 
 export const maybeSetupDebugFunctions = makeBTDModule(({jq, mR}) => {
-  if (!config.Client.debug) {
+  if (!BtdConfig.debug) {
     return;
   }
 
   window.BTD = {
-    debug: {getChirpFromElement, getChirpFromKey, findMustache, jq, mR},
+    debug: {
+      getChirpFromElement,
+      getChirpFromKey,
+      findMustache,
+      jq,
+      mR,
+    },
   };
 });

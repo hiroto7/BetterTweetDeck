@@ -263,6 +263,9 @@
   "settings_show_account_picker_like": {
     "message": "Kontoauswahl beim Liken eines Tweets anzeigen"
   },
+  "settings_show_account_picker_follow": {
+    "message": "Beim Klick auf \"Folgen\" die Kontenauswahl anzeigen"
+  },
   "settings_accent_color": {
     "message": "Akzentfarbe"
   },
@@ -391,5 +394,59 @@
   },
   "settings_default_browsers_language": {
     "message": "Voreinstellung (Sprache des Browsers)"
+  },
+  "settings_logo_variation": {
+    "message": "Logo-Varianten"
+  },
+  "settings_default": {
+    "message": "Voreinstellung"
+  },
+  "settings_action_follow_author": {
+    "message": "Aktion hinzufügen, um dem Tweet-Autor zu folgen"
+  },
+  "settings_follow_actions": {
+    "message": "Follow-Aktionen"
+  },
+  "settings_show_followers_count": {
+    "message": "Zeige die Anzahl der Follower beim \"Folgen\"-Icon"
+  },
+  "settings_show_verified_badges": {
+    "message": "Überprüfte Abzeichen anzeigen"
+  },
+  "settings_show_translator_badges": {
+    "message": "Übersetzerabzeichen anzeigen"
+  },
+  "settings_show_badges_on_mutuals": {
+    "message": "Zeige Abzeichen auf 'Mutuals' (Follower, denen auch du folgst)"
+  },
+  "settings_badges": {
+    "message": "Abzeichen"
+  },
+  "settings_show_a_clear_all_columns_button_in_the_sidebar": {
+    "message": "Den \"Alle Spalten löschen\"-Button in der Sidebar anzeigen"
+  },
+  "settings_require_alt_images": {
+    "message": "Den Tweet-Button deaktivieren, bis alle Bilder eine Beschreibung haben"
+  },
+  "settings_content_warning_hint": {
+    "message": "Wir prüfen, ob Tweets die gebräuchlichen CW-, TW- oder CN-Hinweise enthalten und zeigen diese an!"
+  },
+  "settings_show_content_warnings": {
+    "message": "Inhaltswarnungen für entsprechend markierte Tweets anzeigen"
+  },
+  "settings_images": {
+    "message": "Bilder"
+  },
+  "settings_collapse_unread_dms": {
+    "message": "Auch ungelesene Direktnachrichten einklappen"
+  },
+  "settings_mutual_badge_use_a_heart": {
+    "message": "Ein Herz verwenden"
+  },
+  "settings_mutual_badge_use_double_arrows": {
+    "message": "Doppelpfeil verwenden"
+  },
+  "settings_show_account_avatars_on_top_of_columns": {
+    "message": "Avatar des Kontos im Kopf der Spalte anzeigen"
   }
 }

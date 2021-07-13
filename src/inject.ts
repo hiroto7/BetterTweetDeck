@@ -14,11 +14,13 @@ import {changeScrollbarStyling} from './features/changeScrollbars';
 import {maybeSetupCustomTimestampFormat} from './features/changeTimestampFormat';
 import {changeTweetActionsStyling} from './features/changeTweetActions';
 import {maybeCollapseDms} from './features/collapseDms';
+import {contentWarnings} from './features/contentWarnings';
 import {injectCustomCss} from './features/customCss';
 import {maybeFreezeGifsInProfilePicture} from './features/freezeGifsProfilePictures';
 import {setupGifModals} from './features/gifModals';
 import {maybeHideColumnIcons} from './features/hideColumnIcons';
 import {keepTweetedHashtagsInComposer} from './features/keepTweetedHashtags';
+import {changeLogo} from './features/logoVariations';
 import {makeSearchColumnsFirst} from './features/makeSearchColumnsFirst';
 import {useModernOverlays} from './features/modernOverlays';
 import {pauseColumnsOnHover} from './features/pauseColumnsOnHover';
@@ -26,7 +28,9 @@ import {maybeRemoveRedirection} from './features/removeRedirection';
 import {maybeRenderCardsInColumns} from './features/renderCardsInColumns';
 import {renderMediaAndQuotedTweets} from './features/renderMediaAndQuotedTweets';
 import {maybeReplaceHeartsByStars} from './features/replaceHeartsByStars';
+import {requireAltImages} from './features/requireAltImages';
 import {maybeRevertToLegacyReplies} from './features/revertToLegacyReplies';
+import {showAvatarsInColumnsHeader} from './features/showAvatarsInColumnsHeader';
 import {showTweetDogEars} from './features/showTweetDogEars';
 import {maybeMakeComposerButtonsSmaller} from './features/smallerComposerButtons';
 import {tweakTweetDeckTheme} from './features/themeTweaks';
@@ -38,7 +42,7 @@ import {maybeChangeUsernameFormat} from './features/usernameDisplay';
 import {listenToInternalBTDMessage, sendInternalBTDMessage} from './helpers/communicationHelpers';
 import {displayTweetDeckBanner} from './helpers/tweetdeckHelpers';
 import {setupChirpHandler} from './services/chirpHandler';
-import {setupMediaSizeMonitor} from './services/columnMediaSizeMonitor';
+import {setupColumnMonitor} from './services/columnMediaSizeMonitor';
 import {maybeSetupDebugFunctions} from './services/debugMethods';
 import {insertSettingsButton} from './services/setupSettings';
 import {applyTweetDeckSettings} from './types/abstractTweetDeckSettings';
@@ -89,6 +93,7 @@ const jq: JQueryStatic | undefined =
   // Setup BTD features
   setupChirpHandler(btdModuleOptions);
   maybeSetupDebugFunctions(btdModuleOptions);
+  changeLogo(btdModuleOptions);
 
   overrideTranslateLanguage(btdModuleOptions);
   makeSearchColumnsFirst(btdModuleOptions);
@@ -101,7 +106,7 @@ const jq: JQueryStatic | undefined =
   setupGifModals(btdModuleOptions);
   injectCustomCss(btdModuleOptions);
   maybeRenderCardsInColumns(btdModuleOptions);
-  setupMediaSizeMonitor(btdModuleOptions);
+  setupColumnMonitor(btdModuleOptions);
   maybeRemoveRedirection(btdModuleOptions);
   maybeChangeUsernameFormat(btdModuleOptions);
   maybeRevertToLegacyReplies(btdModuleOptions);
@@ -127,6 +132,7 @@ const jq: JQueryStatic | undefined =
   applyTweetDeckSettings(btdModuleOptions);
   maybeShowCharacterCount(btdModuleOptions);
   showTweetDogEars(btdModuleOptions);
+  contentWarnings(btdModuleOptions);
 
   jq(document).one('dataColumnsLoaded', () => {
     document.body.classList.add('btd-loaded');
@@ -136,6 +142,8 @@ const jq: JQueryStatic | undefined =
       isReponse: false,
       payload: undefined,
     });
+    showAvatarsInColumnsHeader(btdModuleOptions);
+    requireAltImages(btdModuleOptions);
     maybeShowFollowBanner(btdModuleOptions);
     keepTweetedHashtagsInComposer(btdModuleOptions);
     setTimeout(() => {

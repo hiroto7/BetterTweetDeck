@@ -263,6 +263,9 @@
   "settings_show_account_picker_like": {
     "message": "「いいね」を押したときにアカウント選択画面を開く"
   },
+  "settings_show_account_picker_follow": {
+    "message": "「フォロー」を押したときにアカウント選択画面を開く"
+  },
   "settings_accent_color": {
     "message": "アクセントカラー"
   },
@@ -391,5 +394,53 @@
   },
   "settings_default_browsers_language": {
     "message": "デフォルト (ブラウザの言語)"
+  },
+  "settings_logo_variation": {
+    "message": "ロゴの種類"
+  },
+  "settings_default": {
+    "message": "デフォルト"
+  },
+  "settings_action_follow_author": {
+    "message": "投稿者をフォローするアクションを追加"
+  },
+  "settings_follow_actions": {
+    "message": "フォローアクション"
+  },
+  "settings_show_followers_count": {
+    "message": "フォローアイコンの隣にフォロワー数を表示する"
+  },
+  "settings_show_verified_badges": {
+    "message": "認証バッジを表示"
+  },
+  "settings_show_translator_badges": {
+    "message": "翻訳者バッジを表示"
+  },
+  "settings_show_badges_on_mutuals": {
+    "message": "相互フォローにバッジを表示する (あなたが相手をフォローして、相手もあなたをフォローしている場合に表示)"
+  },
+  "settings_badges": {
+    "message": "バッジ"
+  },
+  "settings_show_a_clear_all_columns_button_in_the_sidebar": {
+    "message": "サイドバーに「すべての列をクリア」ボタンを表示する"
+  },
+  "settings_require_alt_images": {
+    "message": "すべての画像に説明を記入するまでツイートボタンを無効にする"
+  },
+  "settings_images": {
+    "message": "画像"
+  },
+  "settings_collapse_unread_dms": {
+    "message": "未読のDMも折りたたむ"
+  },
+  "settings_mutual_badge_use_a_heart": {
+    "message": "ハートを使用する"
+  },
+  "settings_mutual_badge_use_double_arrows": {
+    "message": "両矢印を使用する"
+  },
+  "settings_show_account_avatars_on_top_of_columns": {
+    "message": "カラムの上にアカウントのアバターを表示する"
   }
 }

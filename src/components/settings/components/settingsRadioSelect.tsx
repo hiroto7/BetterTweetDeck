@@ -1,20 +1,24 @@
-import {css} from '@emotion/css';
+import {css, cx} from '@emotion/css';
 import React, {ReactNode} from 'react';
 
 import {HandlerOf} from '../../../helpers/typeHelpers';
 import {AbstractTweetDeckSettings} from '../../../types/abstractTweetDeckSettings';
 import {BTDSettings} from '../../../types/btdSettingsTypes';
+import {settingsDisabled} from '../settingsStyles';
 import {SettingsRadioInput} from './settingsRadioInput';
 
 export interface SettingsRadioSettingsSelectProps<S extends object, T extends keyof S> {
   fields: ReadonlyArray<{
     label: ReactNode;
+    searchTerm?: string;
     value: S[T];
   }>;
   initialValue: S[T];
   settingsKey: T;
   onChange: HandlerOf<S[T]>;
   ignoreSearch?: boolean;
+  className?: string;
+  isDisabled?: boolean;
 }
 
 const wrapperStyles = css`
@@ -33,7 +37,7 @@ export function SettingsRadioSettingSelect<S extends object, T extends keyof S>(
   props: SettingsRadioSettingsSelectProps<S, T>
 ) {
   return (
-    <div className={wrapperStyles}>
+    <div className={cx(wrapperStyles, props.isDisabled && settingsDisabled, props.className)}>
       {props.fields.map((field) => {
         return (
           <SettingsRadioInput
@@ -41,7 +45,8 @@ export function SettingsRadioSettingSelect<S extends object, T extends keyof S>(
             id={String(field.value)}
             name={String(props.settingsKey)}
             defaultChecked={field.value === props.initialValue}
-            onChange={() => props.onChange(field.value)}>
+            onChange={() => props.onChange(field.value)}
+            isDisabled={props.isDisabled}>
             {field.label}
           </SettingsRadioInput>
         );

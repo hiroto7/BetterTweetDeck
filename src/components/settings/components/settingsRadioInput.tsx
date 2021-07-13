@@ -24,10 +24,12 @@ interface SettingsRadioSelectFieldProps {
   id: string;
   defaultChecked: boolean;
   onChange: Handler;
+  className?: string;
+  isDisabled?: boolean;
 }
 export function SettingsRadioInput(props: PropsWithChildren<SettingsRadioSelectFieldProps>) {
   return (
-    <span>
+    <span className={props.className}>
       <input
         name={props.name}
         type="radio"
@@ -35,6 +37,7 @@ export function SettingsRadioInput(props: PropsWithChildren<SettingsRadioSelectF
         defaultChecked={props.defaultChecked}
         className={mainInputStyles}
         onChange={props.onChange}
+        disabled={props.isDisabled}
       />
       <label htmlFor={props.id}>{props.children}</label>
     </span>

@@ -1,9 +1,11 @@
 import * as t from 'io-ts';
 
+import {BTDMutualBadges} from '../features/badgesOnTopOfAvatars';
 import {BTDAvatarShapes} from '../features/changeAvatarShape';
 import {BTDScrollbarsMode} from '../features/changeScrollbars';
 import {BTDTimestampFormats} from '../features/changeTimestampFormat';
 import {BTDTweetActionsPosition} from '../features/changeTweetActions';
+import {BTDLogoVariations} from '../features/logoVariations';
 import {BetterTweetDeckAccentColors, BetterTweetDeckThemes} from '../features/themeTweaks';
 import {BTDUsernameFormat} from '../features/usernameDisplay';
 import {isFirefox} from '../helpers/browserHelpers';
@@ -50,6 +52,9 @@ export const RBetterTweetDeckSettings = t.type({
   /** Pauses scrolling of columns when mouse hovers over theme */
   pauseColumnScrollingOnHover: withDefault(t.boolean, false),
 
+  /** Detects content warnings */
+  detectContentWarnings: withDefault(t.boolean, false),
+
   /** Display single images using their original aspect ratio. */
   useOriginalAspectRatioForSingleImages: withDefault(t.boolean, false),
 
@@ -64,6 +69,8 @@ export const RBetterTweetDeckSettings = t.type({
 
   /** Shows a clear (💧) button in the header of columns */
   showClearButtonInColumnsHeader: withDefault(t.boolean, false),
+  /** Shows a clear (💧) button in the sidebar to clear ALL columns */
+  showClearAllButtonInSidebar: withDefault(t.boolean, false),
 
   /** Shows a collapse (➖/➕) button in the header of columns */
   showCollapseButtonInColumnsHeader: withDefault(t.boolean, false),
@@ -77,11 +84,15 @@ export const RBetterTweetDeckSettings = t.type({
   /** Make buttons in composer smaller */
   smallComposerButtons: withDefault(t.boolean, false),
 
+  /** Disable the `tweet` button if images don't have an alt text. */
+  disableTweetButtonIfAltIsMissing: withDefault(t.boolean, false),
+
   /** Choose the shape of avatars in columns */
   avatarsShape: withDefault(
     makeEnumRuntimeType<BTDAvatarShapes>(BTDAvatarShapes),
     BTDAvatarShapes.CIRCLE
   ),
+  showAvatarsOnTopOfColumns: withDefault(t.boolean, false),
 
   /** Whether to make scrollbars slim or to hide them entirely */
   scrollbarsMode: withDefault(
@@ -91,6 +102,13 @@ export const RBetterTweetDeckSettings = t.type({
 
   /** Put badges (translator/verified) on top of user avatars rather than next to names. */
   badgesOnTopOfAvatars: withDefault(t.boolean, true),
+  verifiedBadges: withDefault(t.boolean, true),
+  translatorBadges: withDefault(t.boolean, true),
+  mutualBadges: withDefault(t.boolean, false),
+  mutualBadgeVariation: withDefault(
+    makeEnumRuntimeType<BTDMutualBadges>(BTDMutualBadges),
+    BTDMutualBadges.HEART
+  ),
 
   /** Where to show tweet actions. */
   tweetActionsPosition: withDefault(
@@ -105,29 +123,33 @@ export const RBetterTweetDeckSettings = t.type({
   tweetActions: withDefault(
     t.type({
       /** Shows a 📎 icon to copy links of medias in a tweet. */
-      addCopyMediaLinksAction: t.boolean,
+      addCopyMediaLinksAction: withDefault(t.boolean, false),
 
       /** Shows a download button to download medias in a tweet. */
-      addDownloadMediaLinksAction: t.boolean,
+      addDownloadMediaLinksAction: withDefault(t.boolean, false),
 
       /** Shows a mute icon to mute the author of a tweet quickly. */
-      addMuteAction: t.boolean,
+      addMuteAction: withDefault(t.boolean, false),
 
       /** Shows a block icon to block the author of a tweet quickly. */
-      addBlockAction: t.boolean,
+      addBlockAction: withDefault(t.boolean, false),
     }),
-    {
-      addCopyMediaLinksAction: false,
-      addDownloadMediaLinksAction: false,
-      addMuteAction: false,
-      addBlockAction: false,
-    }
+    {}
   ),
 
   /** Always shows the account picker when favoriting a tweet */
   showAccountChoiceOnFavorite: withDefault(t.boolean, false),
   /** Comma separated list of account usernames from which to trigger the account picker */
   accountChoiceAllowList: withDefault(t.string, ''),
+
+  /** Shows a follow icon to follow the author of a tweet quickly. */
+  addFollowAction: withDefault(t.boolean, false),
+
+  /** Always shows the account picker when following a user with the tweet action */
+  showAccountChoiceOnFollow: withDefault(t.boolean, true),
+
+  /** Shows the number of followers in the follow actions */
+  showFollowersCount: withDefault(t.boolean, true),
 
   /** Change the display of usernames in columns. */
   usernamesFormat: withDefault(
@@ -141,19 +163,15 @@ export const RBetterTweetDeckSettings = t.type({
   tweetMenuItems: withDefault(
     t.type({
       /** Adds a "redraft" item */
-      addRedraftMenuItem: t.boolean,
+      addRedraftMenuItem: withDefault(t.boolean, true),
 
       /** Adds an item to mute the source of the tweet */
-      addMuteSourceMenuItem: t.boolean,
+      addMuteSourceMenuItem: withDefault(t.boolean, true),
 
       /** Adds a items to mute the hashtags of the tweet */
-      addMuteHashtagsMenuItems: t.boolean,
+      addMuteHashtagsMenuItems: withDefault(t.boolean, true),
     }),
-    {
-      addRedraftMenuItem: true,
-      addMuteHashtagsMenuItems: true,
-      addMuteSourceMenuItem: true,
-    }
+    {}
   ),
 
   /** Show legacy replies in columns */
@@ -177,6 +195,7 @@ export const RBetterTweetDeckSettings = t.type({
   disableGifsInProfilePictures: withDefault(t.boolean, false),
 
   collapseReadDms: withDefault(t.boolean, false),
+  collapseAllDms: withDefault(t.boolean, false),
 
   replaceHeartsByStars: withDefault(t.boolean, false),
 
@@ -197,6 +216,12 @@ export const RBetterTweetDeckSettings = t.type({
 
   overrideTranslationLanguage: withDefault(t.boolean, false),
   customTranslationLanguage: withDefault(t.string, ''),
+
+  /** Change the logo shown at the bottom left of TweetDeck */
+  logoVariation: withDefault(
+    makeEnumRuntimeType<BTDLogoVariations>(BTDLogoVariations),
+    BTDLogoVariations.DEFAULT
+  ),
 });
 
 export interface BTDSettings extends t.TypeOf<typeof RBetterTweetDeckSettings> {}

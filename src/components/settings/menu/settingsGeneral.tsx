@@ -1,12 +1,44 @@
 /* eslint-disable react/jsx-key */
+import {css} from '@emotion/css';
 import React, {FC, Fragment} from 'react';
 
+import heartIcon from '../../../assets/heart-icon.svg';
+import arrowsIcon from '../../../assets/mutual-icon.svg';
+import translatorIcon from '../../../assets/translator-icon.svg';
+import verifiedIcon from '../../../assets/verified-icon.svg';
+import {BTDMutualBadges} from '../../../features/badgesOnTopOfAvatars';
 import {isFirefox, isSafari} from '../../../helpers/browserHelpers';
 import {BTDSettings} from '../../../types/btdSettingsTypes';
 import {Trans} from '../../trans';
 import {CheckboxSelectSettingsRow} from '../components/checkboxSelectSettingsRow';
+import {SettingsRadioSettingSelect} from '../components/settingsRadioSelect';
 import {SettingsTextInputWithAnnotation} from '../components/settingsTimeFormatInput';
 import {SettingsMenuSectionProps, SettingsSmallText} from '../settingsComponents';
+
+const BadgeIcon = ({icon}: {icon: string}) => {
+  return (
+    <span
+      className={css`
+        background: #151f2a;
+        padding: 4px;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 4px;
+        margin-left: 8px;
+        vertical-align: bottom;
+      `}>
+      <img
+        className={css`
+          width: 1em;
+          height: 1em;
+        `}
+        src={icon}
+      />
+    </span>
+  );
+};
 
 export const SettingsGeneral: FC<SettingsMenuSectionProps> = (props) => {
   const {settings, makeOnSettingsChange} = props;
@@ -24,6 +56,12 @@ export const SettingsGeneral: FC<SettingsMenuSectionProps> = (props) => {
             label: <Trans id="settings_hide_icons_on_top_of_columns" />,
           },
           {
+            initialValue: settings.showAvatarsOnTopOfColumns,
+            key: 'showAvatarsOnTopOfColumns',
+            introducedIn: '4.3',
+            label: <Trans id="settings_show_account_avatars_on_top_of_columns" />,
+          },
+          {
             initialValue: settings.pauseColumnScrollingOnHover,
             key: 'pauseColumnScrollingOnHover',
             label: <Trans id="settings_pause_column_scrolling_on_hover" />,
@@ -37,6 +75,11 @@ export const SettingsGeneral: FC<SettingsMenuSectionProps> = (props) => {
             initialValue: settings.showClearButtonInColumnsHeader,
             key: 'showClearButtonInColumnsHeader',
             label: <Trans id="settings_show_clear_button_column" />,
+          },
+          {
+            initialValue: settings.showClearAllButtonInSidebar,
+            key: 'showClearAllButtonInSidebar',
+            label: <Trans id="settings_show_a_clear_all_columns_button_in_the_sidebar" />,
           },
           {
             initialValue: settings.showCollapseButtonInColumnsHeader,
@@ -73,69 +116,15 @@ export const SettingsGeneral: FC<SettingsMenuSectionProps> = (props) => {
         }}
         fields={[
           {
-            initialValue: settings.showLegacyReplies,
-            key: 'showLegacyReplies',
-            label: <Trans id="settings_use_old_style_of_replies" />,
-          },
-          {
-            introducedIn: '4',
-            initialValue: settings.useOriginalAspectRatioForSingleImages,
-            key: 'useOriginalAspectRatioForSingleImages',
-            label: <Trans id="settings_use_original_aspect_ratio_images" />,
-          },
-          {
-            introducedIn: '4.0.1',
-            initialValue: settings.useOriginalAspectRatioForSingleImagesInQuotedTweets,
-            key: 'useOriginalAspectRatioForSingleImagesInQuotedTweets',
-            label: <Trans id="settings_do_the_same_for_single_images_in_quoted_tweets" />,
-            isDisabled: !settings.useOriginalAspectRatioForSingleImages,
-          },
-          {
-            introducedIn: '4',
-            initialValue: settings.useModernFullscreenImage,
-            key: 'useModernFullscreenImage',
-            label: <Trans id="settings_display_modern_fullscreen_images" />,
-          },
-          {
-            introducedIn: '4',
-            initialValue: settings.showCardsInsideColumns,
-            key: 'showCardsInsideColumns',
-            label: <Trans id="settings_show_cards_inside_columns" />,
-          },
-          {
-            introducedIn: '4',
-            initialValue: settings.showCardsInSmallMediaColumns,
-            key: 'showCardsInSmallMediaColumns',
-            isDisabled: !settings.showCardsInsideColumns,
-            label: <Trans id="settings_also_show_cards_in_columns_with_small_media_size" />,
-          },
-          {
-            initialValue: settings.removeRedirectionOnLinks,
-            key: 'removeRedirectionOnLinks',
-            label: <Trans id="settings_remove_t_co_redirection_on_links" />,
-          },
-          {
-            initialValue: settings.biggerEmoji,
-            key: 'biggerEmoji',
-            label: <Trans id="settings_make_emoji_bigger_in_tweets" />,
-          },
-        ]}>
-        <Trans id="settings_tweet_content" />
-      </CheckboxSelectSettingsRow>
-      <CheckboxSelectSettingsRow
-        onChange={(key, value) => {
-          makeOnSettingsChange(key as keyof BTDSettings)(value);
-        }}
-        fields={[
-          {
             initialValue: settings.collapseReadDms,
             key: 'collapseReadDms',
             label: <Trans id="settings_collapse_read_dms" />,
           },
           {
-            initialValue: settings.badgesOnTopOfAvatars,
-            key: 'badgesOnTopOfAvatars',
-            label: <Trans id="settings_show_profile_badges_on_top_of_avatars" />,
+            initialValue: settings.collapseAllDms,
+            key: 'collapseAllDms',
+            label: <Trans id="settings_collapse_unread_dms" />,
+            isDisabled: !settings.collapseReadDms,
           },
           {
             initialValue: settings.disableGifsInProfilePictures,
@@ -149,6 +138,77 @@ export const SettingsGeneral: FC<SettingsMenuSectionProps> = (props) => {
           },
         ]}>
         <Trans id="settings_misc" />
+      </CheckboxSelectSettingsRow>
+      <CheckboxSelectSettingsRow
+        onChange={(key, value) => {
+          makeOnSettingsChange(key as keyof BTDSettings)(value);
+        }}
+        fields={[
+          {
+            initialValue: settings.badgesOnTopOfAvatars,
+            key: 'badgesOnTopOfAvatars',
+            label: <Trans id="settings_show_profile_badges_on_top_of_avatars" />,
+          },
+          {
+            isDisabled: !settings.badgesOnTopOfAvatars,
+            initialValue: settings.verifiedBadges,
+            key: 'verifiedBadges',
+            label: (
+              <>
+                <Trans id="settings_show_verified_badges" />
+                <BadgeIcon icon={verifiedIcon} />
+              </>
+            ),
+          },
+          {
+            isDisabled: !settings.badgesOnTopOfAvatars,
+            initialValue: settings.translatorBadges,
+            key: 'translatorBadges',
+            label: (
+              <>
+                <Trans id="settings_show_translator_badges" />
+                <BadgeIcon icon={translatorIcon} />
+              </>
+            ),
+          },
+          {
+            isDisabled: !settings.badgesOnTopOfAvatars,
+            initialValue: settings.mutualBadges,
+            key: 'mutualBadges',
+            label: <Trans id="settings_show_badges_on_mutuals" />,
+            introducedIn: '4.2',
+            extraContent: (newSettings) => {
+              return (
+                <SettingsRadioSettingSelect<BTDSettings, 'mutualBadgeVariation'>
+                  fields={[
+                    {
+                      label: (
+                        <>
+                          <Trans id="settings_mutual_badge_use_a_heart" />{' '}
+                          <BadgeIcon icon={heartIcon} />
+                        </>
+                      ),
+                      value: BTDMutualBadges.HEART,
+                    },
+                    {
+                      label: (
+                        <>
+                          <Trans id="settings_mutual_badge_use_double_arrows" />
+                          <BadgeIcon icon={arrowsIcon} />
+                        </>
+                      ),
+                      value: BTDMutualBadges.ARROWS,
+                    },
+                  ]}
+                  isDisabled={!newSettings.mutualBadges || !newSettings.badgesOnTopOfAvatars}
+                  settingsKey="mutualBadgeVariation"
+                  onChange={makeOnSettingsChange('mutualBadgeVariation')}
+                  initialValue={newSettings.mutualBadgeVariation}></SettingsRadioSettingSelect>
+              );
+            },
+          },
+        ]}>
+        <Trans id="settings_badges" />
       </CheckboxSelectSettingsRow>
       {!isSafari && (
         <CheckboxSelectSettingsRow

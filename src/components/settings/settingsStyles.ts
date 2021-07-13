@@ -93,6 +93,7 @@ export const settingsRegularText = css`
   p {
     margin-top: 1em;
     margin-bottom: 1em;
+    line-height: 1.8;
   }
 
   ul {
@@ -108,4 +109,9 @@ export const settingsRegularText = css`
   a {
     ${settingsLink};
   }
+`;
+
+export const SettingsSmall = css`
+  font-size: 12px;
+  opacity: 0.8;
 `;
