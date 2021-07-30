@@ -1,4 +1,5 @@
 import {isObject} from 'lodash';
+import ModuleRaid, {ModuleLike} from 'moduleraid';
 
 import {maybeAddColumnsButtons} from './features/addColumnButtons';
 import {maybeAddTweetActions} from './features/addTweetActions';
@@ -15,6 +16,7 @@ import {maybeSetupCustomTimestampFormat} from './features/changeTimestampFormat'
 import {changeTweetActionsStyling} from './features/changeTweetActions';
 import {maybeCollapseDms} from './features/collapseDms';
 import {contentWarnings} from './features/contentWarnings';
+import {addConversationControls} from './features/conversationControl';
 import {injectCustomCss} from './features/customCss';
 import {maybeFreezeGifsInProfilePicture} from './features/freezeGifsProfilePictures';
 import {setupGifModals} from './features/gifModals';
@@ -25,7 +27,7 @@ import {makeSearchColumnsFirst} from './features/makeSearchColumnsFirst';
 import {useModernOverlays} from './features/modernOverlays';
 import {pauseColumnsOnHover} from './features/pauseColumnsOnHover';
 import {maybeRemoveRedirection} from './features/removeRedirection';
-import {maybeRenderCardsInColumns} from './features/renderCardsInColumns';
+import {maybeRenderCardsInColumnsNatively} from './features/renderCardsInColumnsNative';
 import {renderMediaAndQuotedTweets} from './features/renderMediaAndQuotedTweets';
 import {maybeReplaceHeartsByStars} from './features/replaceHeartsByStars';
 import {requireAltImages} from './features/requireAltImages';
@@ -41,11 +43,11 @@ import {useOriginalAspectRatio} from './features/useOriginalAspectRatio';
 import {maybeChangeUsernameFormat} from './features/usernameDisplay';
 import {listenToInternalBTDMessage, sendInternalBTDMessage} from './helpers/communicationHelpers';
 import {displayTweetDeckBanner} from './helpers/tweetdeckHelpers';
+import {hasProperty} from './helpers/typeHelpers';
 import {setupChirpHandler} from './services/chirpHandler';
 import {setupColumnMonitor} from './services/columnMediaSizeMonitor';
 import {maybeSetupDebugFunctions} from './services/debugMethods';
 import {insertSettingsButton} from './services/setupSettings';
-import {applyTweetDeckSettings} from './types/abstractTweetDeckSettings';
 import {BTDModuleOptions, BTDSettingsAttribute, BTDVersionAttribute} from './types/btdCommonTypes';
 import {BTDMessageOriginsEnum, BTDMessages} from './types/btdMessageTypes';
 import {BTDSettings} from './types/btdSettingsTypes';
@@ -58,23 +60,25 @@ declare global {
   }
 }
 
-const moduleRaid = require('./moduleraid');
-let mR;
+let mR: ModuleRaid | undefined;
 try {
-  mR = moduleRaid();
+  mR = new ModuleRaid();
 } catch (e) {
-  console.log(moduleRaid);
+  console.log(ModuleRaid);
   console.error(e);
 }
 
 const TD = window.TD as TweetDeckObject;
 // Grab TweetDeck's jQuery from webpack
-const jq: JQueryStatic | undefined =
-  mR && mR.findFunction('jQuery') && mR.findFunction('jquery:')[0];
+const jq = mR && mR.findConstructor('jQuery') && mR.findConstructor('jquery:')[0][1];
+
+function isModulejQuery(mod: ModuleLike | undefined): mod is JQueryStatic {
+  return hasProperty(mod, 'Animation');
+}
 
 (async () => {
   const settings = getBTDSettings();
-  if (!settings || !jq || !isObject(TD)) {
+  if (!settings || !isModulejQuery(jq) || !isObject(TD) || !mR) {
     return;
   }
 
@@ -105,7 +109,6 @@ const jq: JQueryStatic | undefined =
   renderMediaAndQuotedTweets(btdModuleOptions);
   setupGifModals(btdModuleOptions);
   injectCustomCss(btdModuleOptions);
-  maybeRenderCardsInColumns(btdModuleOptions);
   setupColumnMonitor(btdModuleOptions);
   maybeRemoveRedirection(btdModuleOptions);
   maybeChangeUsernameFormat(btdModuleOptions);
@@ -129,7 +132,6 @@ const jq: JQueryStatic | undefined =
   insertSettingsButton(btdModuleOptions);
   setupThemeAutoSwitch(btdModuleOptions);
   maybeSetupCustomTimestampFormat(btdModuleOptions);
-  applyTweetDeckSettings(btdModuleOptions);
   maybeShowCharacterCount(btdModuleOptions);
   showTweetDogEars(btdModuleOptions);
   contentWarnings(btdModuleOptions);
@@ -142,6 +144,8 @@ const jq: JQueryStatic | undefined =
       isReponse: false,
       payload: undefined,
     });
+    addConversationControls(btdModuleOptions);
+    maybeRenderCardsInColumnsNatively(btdModuleOptions);
     showAvatarsInColumnsHeader(btdModuleOptions);
     requireAltImages(btdModuleOptions);
     maybeShowFollowBanner(btdModuleOptions);
@@ -167,6 +171,7 @@ const jq: JQueryStatic | undefined =
   });
   jq(document).on('uiResetImageUpload', () => {
     jq('.btd-gif-button').addClass('-visible');
+    jq('.compose-text-container #btdConversationControl').removeClass('-gif-hidden');
   });
 
   listenToInternalBTDMessage(
@@ -184,6 +189,7 @@ const jq: JQueryStatic | undefined =
         files: [gifFile],
       });
       jq('.btd-gif-button').removeClass('-visible');
+      jq('.compose-text-container #btdConversationControl').addClass('-gif-hidden');
     }
   );
 })();

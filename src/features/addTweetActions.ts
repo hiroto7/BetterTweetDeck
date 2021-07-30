@@ -9,6 +9,7 @@ import {
   getFilenameDownloadData,
   getMediaFromChirp,
 } from '../helpers/tweetdeckHelpers';
+import {makeIsModuleRaidModule} from '../helpers/typeHelpers';
 import {makeBTDModule} from '../types/btdCommonTypes';
 import {TweetDeckUser, TwitterActionEnum} from '../types/tweetdeckTypes';
 import {requestMediaItem} from './redraftTweet';
@@ -197,31 +198,35 @@ export const maybeAddTweetActions = makeBTDModule(({settings, TD, jq, mR}) => {
     return string.replace(marker, replacement);
   });
 
-  jq('body').on('click', `[data-btd-action="${TweetActions.DOWNLOAD_MEDIA}"]`, (ev) => {
+  jq('body').on('click', `[data-btd-action="${TweetActions.DOWNLOAD_MEDIA}"]`, async (ev) => {
     ev.preventDefault();
     const chirp = getChirpFromElement(TD, ev.target)?.chirp;
     if (!chirp) {
       return;
     }
     const media = getMediaFromChirp(chirp);
+    const mediaPromises = media.map((item) => {
+      return requestMediaItem(item);
+    });
 
-    media.forEach((item) => {
-      requestMediaItem(item).then((file) => {
-        if (!file) {
-          return;
-        }
-        try {
-          saveAs(
-            file,
-            TD.ui.template.render(
-              'btd/download_filename_format',
-              getFilenameDownloadData(chirp, item)
-            )
-          );
-        } catch (e) {
-          console.error(e);
-        }
-      });
+    const maybeResults = await Promise.all(mediaPromises);
+
+    maybeResults.forEach((file, index) => {
+      if (!file) {
+        return;
+      }
+
+      try {
+        saveAs(
+          file,
+          TD.ui.template.render(
+            'btd/download_filename_format',
+            getFilenameDownloadData(chirp, media[index])
+          )
+        );
+      } catch (e) {
+        console.error(e);
+      }
     });
   });
 
@@ -279,12 +284,14 @@ export const maybeAddTweetActions = makeBTDModule(({settings, TD, jq, mR}) => {
       .removeClass(removedClass);
   };
 
-  const findPrefix: ((n: number, options: unknown) => string) | undefined =
-    mR.findFunction('findPrefix')[0];
+  const findPrefix = mR.findConstructor('findPrefix')[0][1];
+  const isFindPrefix = makeIsModuleRaidModule<(n: number, options: unknown) => string>(
+    (mod) => typeof mod === 'function'
+  );
 
-  if (findPrefix) {
+  if (isFindPrefix(findPrefix)) {
     TD.services.TwitterUser.prototype.prettyFollowersCountInTweetAction = function () {
-      return findPrefix(this.followersCount, {separator: '', decimals: 0});
+      return String(findPrefix(this.followersCount, {separator: '', decimals: 0}));
     };
   }
 
